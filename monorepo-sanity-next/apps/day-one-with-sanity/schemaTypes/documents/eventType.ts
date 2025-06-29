@@ -1,4 +1,4 @@
-import {  defineField, GeopointRule, StringRule, TextRule } from "sanity";
+import {  DatetimeRule, defineField, GeopointRule, StringRule, TextRule } from "sanity";
 import { CalendarIcon } from '@sanity/icons';
 import { typeFactory } from "../typeFactory";
 import { documentTypes } from "../constants";
@@ -20,7 +20,7 @@ export const eventType = typeFactory({
       name: 'date',
       type: 'datetime',
       description: 'Date and time of the event',
-      validation: (Rule) => Rule.required()
+      validation: (Rule: DatetimeRule) => Rule.required()
     }),
     defineField({
       name: 'outside',
@@ -44,7 +44,7 @@ export const eventType = typeFactory({
       name: 'description',
       type: 'text',
       description: 'Description of the event',
-      validation: (Rule: TextRule) => Rule.required().min(10).max(500),
+      validation: (Rule: TextRule) => Rule.required().min(1).max(500),
       components: {
         input: InputField
       }
