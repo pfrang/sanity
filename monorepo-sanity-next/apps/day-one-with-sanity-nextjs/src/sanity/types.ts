@@ -197,7 +197,7 @@ export type AllSanitySchemaTypes = Event | Association | SanityImagePaletteSwatc
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../day-one-with-sanity-nextjs/src/app/events/[slug]/page.tsx
 // Variable: EVENT_QUERY
-// Query: *[    _type == "event" &&    slug.current == $slug  ][0]{  ...,  "date": coalesce(date, now()),  headline->,  venue->}
+// Query: *[    _type == "event" &&    slug.current == $slug  ][0]{  ...,  "date": coalesce(date, now()),}
 export type EVENT_QUERYResult = {
   _id: string;
   _type: "event";
@@ -210,25 +210,48 @@ export type EVENT_QUERYResult = {
   outside?: "both" | "inside" | "outside";
   location?: Geopoint;
   description?: string;
-  headline: null;
-  venue: null;
 } | null;
 
 // Source: ../day-one-with-sanity-nextjs/src/app/page.tsx
-// Variable: EVENTS_QUERY
-// Query: *[  _type == "event"  && defined(slug.current)]{_id, name, slug, date}|order(date desc)
-export type EVENTS_QUERYResult = Array<{
+// Variable: ASSOCIATION_QUERY
+// Query: *[  _type == "association"  && defined(slug.current)]{_id, name, slug, date, logo, events[]->}|order(date desc)
+export type ASSOCIATION_QUERYResult = Array<{
   _id: string;
   name: string | null;
   slug: Slug | null;
-  date: string | null;
+  date: null;
+  logo: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  events: Array<{
+    _id: string;
+    _type: "event";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name?: string;
+    slug?: Slug;
+    date?: string;
+    outside?: "both" | "inside" | "outside";
+    location?: Geopoint;
+    description?: string;
+  }> | null;
 }>;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"date\": coalesce(date, now()),\n  headline->,\n  venue->\n}": EVENT_QUERYResult;
-    "*[\n  _type == \"event\"\n  && defined(slug.current)\n]{_id, name, slug, date}|order(date desc)": EVENTS_QUERYResult;
+    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"date\": coalesce(date, now()),\n}": EVENT_QUERYResult;
+    "*[\n  _type == \"association\"\n  && defined(slug.current)\n]{_id, name, slug, date, logo, events[]->}|order(date desc)": ASSOCIATION_QUERYResult;
   }
 }
